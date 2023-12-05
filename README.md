@@ -1,6 +1,8 @@
 # Home Assistant Assist Timer Functionality.
 This script adds timer functionality to Home Assistant's Assist.
 For now, it adds the ability to start and stop timers and ask how much time is left on all or a specific timer.
+Thanks to
+https://github.com/hannemann/ha_intent_timers/
 
 # Usage
 Installation

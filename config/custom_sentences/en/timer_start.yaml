@@ -4,52 +4,51 @@ intents:
     data:
 #All times
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours}) (hour|hours) [and] ({advertised_timer_values:minutes}|{minutes}) (minute|minutes) [and] ({advertised_timer_values:seconds}|{seconds}) (second|seconds)"
+          - "[(please|would|could) you] (start|set) [a] [timer for] ({advertised_timer_values:hours}|{hours}) (hour|hours) [and] ({advertised_timer_values:seconds}|{minutes}) (minute|minutes) [and] ({advertised_timer_values:seconds}|{seconds}) (second|seconds) [timer] [please]"
 #Only hour(s)
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours}) (hour|hours)"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours}) (hour|hours) [timer] [please]"
         slots:
           seconds: 0
           minutes: 0
 #Only minute(s)
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes}) (minute|minutes)"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes}) (minute|minutes) [timer] [please]"
         slots:
           seconds: 0
           hours: 0
 #Only seconds
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:seconds}|{seconds}) (second|seconds)"
+          - "[(please|would|could) you] (start|set) [a] [timer for] ({advertised_timer_values:seconds}|{seconds}) (second|seconds) [timer] [please]"
         slots:
           minutes: 0
           hours: 0
 #No hour, only minutes and seconds
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes}) (minute|minutes) [and] ({advertised_timer_values:seconds}|{seconds}) (second|seconds)"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes}) (minute|minutes) [and] ({advertised_timer_values:seconds}|{seconds}) (second|seconds) [timer] [please]"
         slots:
           hours: 0          
 #No seconds, only hours and minutes
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours}) (hour|hours) [and] ({advertised_timer_values:minutes}|{minutes}) (minute|minutes)"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours}) (hour|hours) [and] ({advertised_timer_values:minutes}|{minutes}) (minute|minutes) [timer] [please]"
         slots:
           seconds: 0
 #Halves
 #Minutes
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes})[ ]and a half (minute|minutes)"
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes})[ ]and (0,5|0.5) (minute|minutes)"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes})[ ]and a half (minute|minutes) [timer] [please]"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:minutes}|{minutes})[ ]and (0,5|0.5) (minute|minutes) [timer] [please]"
         slots:
           hours: 0
           seconds: 30
 #Hours
       - sentences:
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours})[ ][hour ]and (a half|half a) [minute]"
-          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours})[ ][hour ]and (0,5|0.5) [minute]"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours})[ ][hour ]and (a half|half a) [minute] [timer] [please]"
+          - "[(please|would|could) you] (start|set) [a] timer for ({advertised_timer_values:hours}|{hours})[ ][hour ]and (0,5|0.5) [minute] [timer] [please]"
         slots:
           minutes: 30
           seconds: 0
-  reminder:
-    wildcard: true
+lists:
   seconds:
     range:
       from: 0
@@ -82,8 +81,6 @@ intents:
         out: 8
       - in: nine
         out: 9
-      - in: "null"
-        out: 0
 responses:
   intents:
     TimerStart:

@@ -12,11 +12,11 @@ lists:
   entity_id:
     values:
       - in: "first"
-        out: "timer.timer1"
+        out: "timer.va_timer1"
       - in: "second"
-        out: "timer.timer2"
+        out: "timer.va_timer2"
       - in: "third"
-        out: "timer.timer3"
+        out: "timer.va_timer3"
       - in: "(all|every)"
         out: "all"
         
@@ -28,9 +28,9 @@ responses:
         {% if timer_amount == 0 %}
         There are no timers active at this moment.
         {% elif (timer_amount == 1 and slots.entity_id == 'null') or states('timer.' + slots.entity_id) == 'active'%}
-        {{ (["Understood. ", "Sure. ", "Of course. ", ""] | random) }}{{ (["Cancelled.", "Timer cancelled.", "Stopped timer.", "Timer stopped.", "Deactivated.", "Timer deactivated.", "Timer turned off.", "Turned off timer."] | random) }}
+        {{ (["Sup Bro. ", "Understood. ", "Sure. ", "Of course. ", ""] | random) }}{{ (["Cancelled.", "Timer cancelled.", "Stopped timer.", "Timer stopped.", "Deactivated.", "Timer deactivated.", "Timer turned off.", "Turned off timer."] | random) }}
         {% elif slots.entity_id == 'all' %}
-        {{ (["Understood. ", "Sure. ", "Of course. ", ""] | random) }}{{ (["All timers cancelled.", "Timers cancelled.", "Stopped all timers.", "All timers deactivated.", "Deactivated all timers.", "Timers turned off.", "Turned off all timers."] | random) }}
+        {{ (["Sup Bro. ", "Understood. ", "Sure. ", "Of course. ", ""] | random) }}{{ (["All timers cancelled.", "Timers cancelled.", "Stopped all timers.", "All timers deactivated.", "Deactivated all timers.", "Timers turned off.", "Turned off all timers."] | random) }}
         {% else %}
           {% if states('timer.' + slots.entity_id) != 'active' and slots.entity_id != 'null' %}
           This timer is currently inactive. {% 

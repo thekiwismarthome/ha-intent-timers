@@ -1,75 +1,150 @@
 timer:
   va_timer1:
+    name: "Timer 1"
   va_timer2:
+    name: "Timer 2"
   va_timer3:
+    name: "Timer 3"
 
 input_text:
   va_timer1:
-    name: Timer 1 Reminder
-    initial: ""
+    name: Timer 1
+    initial: "Timer 1"
   va_timer2:
-    name: Timer 2 Reminder
-    initial: ""
+    name: Timer 2
+    initial: "Timer 2"
   va_timer3:
-    name: Timer 3 Reminder
-    initial: ""
+    name: Timer 3
+    initial: "Timer 3"
+
+input_select:
+  timer_sound_options:
+    name: Timer Sound Options
+    options:
+      - 'argon'
+      - 'interface-hint-notification-911'
+      - 'aggressive-medium-sized-dog-growling-56'
+      - 'angry-and-agitated-dog-growling-53'
+      - 'annoyed-big-dog-barking-51'
+      - 'cartoon-insect-buzzing-31'
+      - 'giant-dog-aggressive-growl-59'
+      - 'home-standard-ding-dong-109'
+      - 'retro-game-emergency-alarm-1000'
+      - 'scanning-sci-fi-alarm-905'
+      - 'security-facility-breach-alarm-994'
+      - 'warning-alarm-buzzer-991'
+      # Add more sound options as needed
+    initial: 'argon'
+
+  timer_media_player:
+    name: Timer Media Player
+    options:
+      - 'kitchen_speaker'
+      - 'living_room_speaker'
+      - 'master_bedroom_speaker'
+      # Add more media player options
 
 automation:
-  - id: 70f8afa6-0e95-4eca-b1b7-29fd1334ec06
-    alias: Voice Assistant Timer Finished
+  - id: 'timer_finished_alarm_001'
+    alias: "Timer Finished Alarm"
     trigger:
-      - platform: event
-        event_type: timer.finished
-        event_data:
-          entity_id: timer.va_timer1
-      - platform: event
-        event_type: timer.finished
-        event_data:
-          entity_id: timer.va_timer2
-      - platform: event
-        event_type: timer.finished
-        event_data:
-          entity_id: timer.va_timer3
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.va_timer1
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.va_timer2
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.va_timer3
+
     variables:
       text_entity: "input_text.{{ trigger.event.data.entity_id.split('.')[1] }}"
       reminder_prefix: "Erinnerung an:"
       text: "{{ states(text_entity) }}"
       message: "{{ reminder_prefix }} {{ text }}"
-      language: de_DE
-      voice: de_DE-thorsten-high
-      alarm: "{{ ['dädüüü!', 'düüüüt!', 'piiiep!', 'nähk!', 'miep!', 'düdelüüt!', 'törööö!', 'bing!'] | random }}"
-    action:
-      - if:
-          - condition: template
-            value_template: "{{ text != '' }}"
-        then:
-          service: media_player.play_media
-          target:
-            entity_id: media_player.vlc_telnet
-          data:
-            media_content_id: >-
-              media-source://tts/tts.piper?message={{ message }}&language={{ language }}&voice={{ voice }}
-            media_content_type: provider
-        else:
-          repeat:
-            count: 10
-            sequence:
-              - service: media_player.play_media
-                target:
-                  entity_id: media_player.vlc_telnet
-                data:
-                  media_content_id: >-
-                    media-source://tts/tts.piper?message={{ alarm }}&language={{ language }}&voice={{ voice }}
-                  media_content_type: provider
-              - delay: 1
-      - service: input_text.set_value
-        target:
-          entity_id: "{{ text_entity }}"
-        data:
-          value: ""
+      language: en-NZ
+      voice: MollyNeural
+      alarm: "{{ ['alarm!', 'beep!', 'siren!', 'horn!', 'whistle!', 'bell!', 'trumpet!', 'ding!'] | random }}"
 
+    condition: []
+    action:
+    - wait_for_trigger:
+        - platform: event
+          event_type: timer.finished
+          event_data:
+            entity_id: timer.va_timer1
+        - platform: event
+          event_type: timer.finished
+          event_data:
+            entity_id: timer.va_timer2
+        - platform: event
+          event_type: timer.finished
+          event_data:
+            entity_id: timer.va_timer3
+    - service: notify.persistent_notification
+      data:
+        title: "Timer Finished"
+        # message: "Timer {{ trigger.event.data.entity_id.split('.')[1] }} finished!"
+        message: "Timer {{ text }} finished!"
+    - repeat:
+        count: 2
+        sequence:
+        - service: media_player.play_media
+          data_template:
+            entity_id: "media_player.{{ states('input_select.timer_media_player') }}"
+            media_content_id: "media-source://tts/cloud?message={{ text }}&language={{ language }}&voice={{ voice }}"
+            media_content_type: provider
+        - delay:
+            seconds: 2
+        - service: media_player.play_media
+          data_template:
+            entity_id: "media_player.{{ states('input_select.timer_media_player') }}"
+            media_content_id: "media-source://media_source/local/alarms/{{ states('input_select.timer_sound_options') }}.mp3"
+            media_content_type: audio/mpeg
+        - delay:
+            seconds: "{{ state_attr('media_player.' ~ states('input_select.timer_media_player'), 'media_duration') }}"
 script:
   set_timer_start:
+    variables:
+      entity: >
+        {% if states('timer.va_timer1') != 'active' and states('timer.va_timer1') != 'paused' %}
+          va_timer1
+        {% elif states('timer.va_timer2') != 'active' and states('timer.va_timer2') != 'paused' %}
+          va_timer2
+        {% else %}
+          va_timer3
+        {% endif%}
+    sequence:
+      - service: input_text.set_value
+        target:
+          entity_id: "input_text.{{ entity }}"
+        data:
+          value: "{{ reminder }}"
+      - service: timer.start
+        data:
+          duration: "{{ hours | default(0) }}:{{ minutes | default(0) }}:{{ seconds | default(0) }}"
+        target:
+          entity_id: "timer.{{ entity }}"
+
+      ### If you want to save the area where assist was activate
+      ### Only with esphome devices, no phone or browser
+      - service: input_text.set_value
+        target:
+          entity_id: >
+            {% if states('timer.va_timer1') != 'active' and states('timer.va_timer1') != 'paused' %} input_text.vva_timer1_area
+            {% elif states('timer.va_timer2') != 'active' and states('timer.va_timer2') != 'paused' %} input_text.va_timer2_area
+            {% else %} input_text.va_va_timer3_area{% endif%}
+        data:
+          value: > ### Change sensor_suffix to match your installation.
+            {% set sensor_suffix = "processing" %}
+            {% set active_sensor = states.binary_sensor | selectattr('entity_id', 'match', '.*' + sensor_suffix + '$') | selectattr('state', 'eq', 'on') | first %}
+            {{ area_name(active_sensor.entity_id) if active_sensor else 'Unknown' }}
+
+  set_timer_stop:
     variables:
       entity: >
         {% if states('timer.va_timer1') != 'active' and states('timer.va_timer1') != 'paused' %}

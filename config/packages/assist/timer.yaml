@@ -60,7 +60,6 @@ automation:
       event_type: timer.finished
       event_data:
         entity_id: timer.va_timer3
-
     variables:
       text_entity: "input_text.{{ trigger.event.data.entity_id.split('.')[1] }}"
       reminder_prefix: "Erinnerung an:"
@@ -69,7 +68,6 @@ automation:
       language: en-NZ
       voice: MollyNeural
       alarm: "{{ ['alarm!', 'beep!', 'siren!', 'horn!', 'whistle!', 'bell!', 'trumpet!', 'ding!'] | random }}"
-
     condition: []
     action:
     - wait_for_trigger:
@@ -87,8 +85,7 @@ automation:
             entity_id: timer.va_timer3
     - service: notify.persistent_notification
       data:
-        title: "Timer Finished"
-        # message: "Timer {{ trigger.event.data.entity_id.split('.')[1] }} finished!"
+        title: "Timer Finished" ### message: "Timer {{ trigger.event.data.entity_id.split('.')[1] }} finished!"
         message: "Timer {{ text }} finished!"
     - repeat:
         count: 2
@@ -130,19 +127,19 @@ script:
         target:
           entity_id: "timer.{{ entity }}"
 
-      ### If you want to save the area where assist was activate
-      ### Only with esphome devices, no phone or browser
-      - service: input_text.set_value
-        target:
-          entity_id: >
-            {% if states('timer.va_timer1') != 'active' and states('timer.va_timer1') != 'paused' %} input_text.vva_timer1_area
-            {% elif states('timer.va_timer2') != 'active' and states('timer.va_timer2') != 'paused' %} input_text.va_timer2_area
-            {% else %} input_text.va_va_timer3_area{% endif%}
-        data:
-          value: > ### Change sensor_suffix to match your installation.
-            {% set sensor_suffix = "processing" %}
-            {% set active_sensor = states.binary_sensor | selectattr('entity_id', 'match', '.*' + sensor_suffix + '$') | selectattr('state', 'eq', 'on') | first %}
-            {{ area_name(active_sensor.entity_id) if active_sensor else 'Unknown' }}
+      # ### If you want to save the area where assist was activate
+      # ### Only with esphome devices, no phone or browser
+      # - service: input_text.set_value
+      #   target:
+      #     entity_id: >
+      #       {% if states('timer.va_timer1') != 'active' and states('timer.va_timer1') != 'paused' %} input_text.vva_timer1_area
+      #       {% elif states('timer.va_timer2') != 'active' and states('timer.va_timer2') != 'paused' %} input_text.va_timer2_area
+      #       {% else %} input_text.va_va_timer3_area{% endif%}
+      #   data:
+      #     value: > ### Change sensor_suffix to match your installation.
+      #       {% set sensor_suffix = "processing" %}
+      #       {% set active_sensor = states.binary_sensor | selectattr('entity_id', 'match', '.*' + sensor_suffix + '$') | selectattr('state', 'eq', 'on') | first %}
+      #       {{ area_name(active_sensor.entity_id) if active_sensor else 'Unknown' }}
 
   set_timer_stop:
     variables:

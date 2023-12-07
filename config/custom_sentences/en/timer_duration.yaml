@@ -24,7 +24,7 @@ lists:
         out: "timer.va_timer3"
       - in: "(all|every)"
         out: "timer.va_timer1, timer.va_timer2, timer.va_timer3"
-        
+
 responses:
   intents:
     TimerDuration:
@@ -40,12 +40,10 @@ responses:
             for timer in active_timers %}{%
             set timer_id = timer.entity_id %}{%
             set timer_finishes_at = state_attr(timer_id, 'finishes_at') %}{%
-  
             set time_remaining = as_datetime(timer_finishes_at) - now() %}{%
             set hours_remaining = time_remaining.total_seconds() // 3600 %}{%
             set minutes_remaining = (time_remaining.total_seconds() % 3600) // 60 %}{%
             set seconds_remaining = time_remaining.total_seconds() % 60 %}{%
-            
             if timer.state == "active" or timer.state == "paused" %}{%
               if slots.entity_id != timer_id 
                 %}Timer {{ timer_id[11:] }} {%
@@ -55,7 +53,7 @@ responses:
               if hours_remaining > 1 %}{{ hours_remaining | round }} hours {% endif %}{%
               if minutes_remaining == 1 %}1 minute {% endif %}{%
               if minutes_remaining > 1 %}{{ minutes_remaining | round }} minutes {% endif %}{%
-              if seconds_remaining == 1 and hours_remaining == 0%}1 seconde {% endif %}{%
+              if seconds_remaining == 1 and hours_remaining == 0%}1 seconds {% endif %}{%
               if seconds_remaining > 1 and hours_remaining == 0 %}{{ seconds_remaining | round }} seconds {% endif %}left. {%
             endif %}{%
             endfor %}
